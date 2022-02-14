@@ -1,0 +1,58 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ vendor.name }} | {% endblock %}
+
+{% block content %}
+    <div class="columns is-multiline mb-6">
+        <div class="column is-12 has-text-centered mt-6 mb-6">
+            <h2 class="is-size-3">{{ vendor.name }}</h2>
+        </div>
+
+        {% for product in vendor.products.all %}
+            {% if not product.is_sold %}
+                {% include 'product/parts/list_item.html' %}
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <div class="box">
+        <h2 class="is-size-3 mb-4">Reviews</h2>
+
+      {% if reviews %}
+
+            <strong>Average rate: </strong>{{ vendor.get_average_rate }}/5.0
+
+            <hr>
+            <div class="table-container">
+                <table class="table is-fullwidth">
+                    <thead>
+                    <tr>
+                        <th>Rate</th>
+                        <th>Comment</th>
+                        <th>Written by</th>
+                        <th>Date</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for review in reviews %}
+                        <tr>
+                            <td>{{ review.rate }}</td>
+                            {% if request.user.is_authenticated %}
+                                <td>{{ review.comment }}</td>
+                                <td>{{ review.made_by.name }}</td>
+                                <td>{{ review.created_at }}</td>
+                            {% else %}
+                                <td>Login to see more</td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p>He doesn't have any reviews yet...</p>
+        {% endif %}
+    </div>
+
+{% endblock %}

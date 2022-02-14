@@ -1,0 +1,12 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Success | {% endblock %}
+
+{% block content %}
+    <h1 class="title">Thanks for the order</h1>
+    <hr>
+    <h3>You order has been concluded. You will be notified once it is shipped.</h3>
+    <p>
+        <a href="{% url "frontpage" %}">Back to homepage</a>
+    </p>
+{% endblock %}

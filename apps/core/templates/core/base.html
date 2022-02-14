@@ -1,0 +1,194 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{% block title %}{% endblock %}fleamarket</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <link rel="stylesheet" href="{% static 'styles/main.css' %}">
+
+    <script src="{% static 'scripts/main.js' %}"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/js/all.min.js'>
+    </script>
+</head>
+
+<body>
+<nav class="navbar is-dark">
+    <div class="navbar-brand">
+        <a href="/" class="navbar-item"><strong>fleamarket</strong></a>
+
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="main-navbar">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+
+    <div class="navbar-menu" id="main-navbar">
+        <form method="get" action="{% url 'search' %}">
+            <div class="navbar-start">
+                <div class="navbar-item">
+
+                    <div class="field has-addons">
+                        <div class="control">
+                            <input type="text" class="input" placeholder="Search..." name="query">
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="navbar-item">
+                    <div class="select is-rounded">
+                        <select name="category">
+                            <option>Select category</option>
+                            {% for category in menu_categories %}
+                                <option>{{ category.title }}</option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+                </div>
+
+                <div class="navbar-item">
+                    <div class="select is-rounded">
+                        <select name="order">
+                            <option>Sorted by</option>
+                            <option>date (new-old)</option>
+                            <option>date (old-new)</option>
+                            <option>price (low-high)</option>
+                            <option>price (high-low)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="navbar-item">
+                    <div class="control">
+                        <button class="button is-dark is-uppercase">Search</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+
+        <div class="navbar-end">
+
+
+            {% if request.user.is_authenticated %}
+                <div class="navbar-item">
+                    <a href="{% url "logout" %}"
+                       class="button is-dark">
+                        Logout
+                    </a>
+                </div>
+
+
+
+
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">
+                        Account
+                    </a>
+
+                    <div class="navbar-dropdown">
+                        <a class="navbar-item" href="{% url "notifications" %}"> Notifications
+                            ({{ request.user.notifications.unread|length }}) </a>
+                        <a class="navbar-item" href={% url "personal_data" %}>
+                            Personal data
+                        </a>
+
+                        {% if request.user.is_vendor %}
+
+                            <a class="navbar-item" href="{% url "vendor_admin" %}">Info about my adverts</a>
+
+                        {% else %}
+
+                            <a class="navbar-item" href="{% url "upgrade_vendor" %}"> Activate seller profile</a>
+
+                        {% endif %}
+
+
+                        {% if request.user.is_costumer %}
+
+                            <a class="navbar-item" href="{% url "costumer_admin" %}">Info about my orders</a>
+
+                        {% else %}
+
+                            <a class="navbar-item" href="{% url "upgrade_costumer" %}">Activate buyer profile </a>
+
+                        {% endif %}
+
+
+                    </div>
+                </div>
+
+
+
+
+            {% else %}
+                <div class="navbar-item">
+                    <a href="{% url "login" %}"
+                       class="button is-dark">
+                        Login
+                    </a>
+                </div>
+
+                <div class="navbar-item">
+                    <a href="{% url "register" %}"
+                       class="button is-dark">
+
+                        Sign in
+                    </a>
+                </div>
+            {% endif %}
+
+
+
+
+
+            <div class="navbar-item">
+                <a href="{% url 'cart' %}" class="button is-dark">Cart{% if cart %} ({{ cart|length }}){% endif %}</a>
+            </div>
+        </div>
+    </div>
+
+</nav>
+
+<section class="section">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="notification {{ message.tags }} is-toast">
+                    <button class="delete"></button>
+                    {{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% block content %}
+        {% endblock %}
+    </div>
+</section>
+
+<footer class="footer">
+    <h3 class="is-size-4 mb-4">fleamarket</h3>
+
+    {% if request.user.is_authenticated %}
+        <a href="{% url 'logout' %}">Logout | </a>
+
+    {% else %}
+        <a href="{% url 'login' %}">Login | </a>
+        <a href="{% url 'register' %}">Sign in | </a>
+    {% endif %}
+    <a href="{% url 'vendors' %}">All vendors |  </a>
+    <a href="{% url 'contact' %}" class="navbar-item">Contact</a>
+</footer>
+
+
+{% block scripts %}
+
+{% endblock %}
+</body>
+</html>
